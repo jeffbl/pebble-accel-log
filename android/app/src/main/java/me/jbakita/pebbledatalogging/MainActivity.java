@@ -12,9 +12,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.getpebble.android.kit.PebbleKit;
 import com.getpebble.android.kit.PebbleKit.PebbleDataLogReceiver;
@@ -23,9 +23,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.UUID;
-import java.util.ArrayList;
 
 /**
  * MainActivity class
@@ -252,7 +252,10 @@ public class MainActivity extends Activity {
         long lastReading = 0;
         long firstReading = 0;
         // Get/create our application's save folder
-        File dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/PebbleDataLogging/");
+        String savePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/PebbleDataLogging/";
+        Log.d("log path: ", savePath);
+        File dir = new File(savePath);
+        //File dir = new File(ContextCompat.getExternalFilesDirs(getApplicationContext(), null)[0] + "/PebbleDataLogging/");
         // Make sure that the path is a directory if it exists, otherwise create it
         if (dir.exists() && !dir.isDirectory()) {
             displayDialog("Error", "Unable to save readings. Save path exists, but is not a directory");
@@ -265,6 +268,7 @@ public class MainActivity extends Activity {
         // Create the file in the <activity name>-<sensor name>-<system time>.csv format
         File file = new File(dir, name + " " + sensor.getTitle() + " " + DateFormat.getDateTimeInstance().format(new Date()) + ".csv");
         FileOutputStream outputStream = new FileOutputStream(file);
+        Log.d("MainActivity", "Writing to " + file.getAbsolutePath());
 
         // Write the column headers
         outputStream.write((AccelerometerReading.CSV_HEADER + "\n").getBytes());

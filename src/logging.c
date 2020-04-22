@@ -2,7 +2,7 @@
 #include "logging.h"
 
 // Constants
-static const AccelSamplingRate PAL_SAMPLE_RATE = ACCEL_SAMPLING_25HZ;
+static const AccelSamplingRate PAL_SAMPLE_RATE = ACCEL_SAMPLING_100HZ;
 enum states {
   RECORDING,
   STOPPED
@@ -109,8 +109,10 @@ static void cache_accel(AccelData * data, uint32_t num_samples) {
 // Start data recording
 static void start(ClickRecognizerRef recognizer, void *context) {
   state = RECORDING;
-  // Register acceleration event handler with a 25 sample buffer
+  // Register acceleration event handler with a 25 sample (max size) buffer
   accel_data_service_subscribe(25, cache_accel);
+  // Set Accelerometer to sample rate
+  accel_service_set_sampling_rate(PAL_SAMPLE_RATE);
   // Display the pre-run message
   text_layer_set_text(text_layer, "Logging...\n\n(press the top or middle buttons to stop, or the bottom button to flush the data buffer)");
 }
@@ -135,7 +137,7 @@ static void switch_state(ClickRecognizerRef recognizer, void * context) {
 // Setup button handling
 void click_config_provider3(Window *window) {
   window_single_click_subscribe(BUTTON_ID_SELECT, switch_state);
-  window_single_click_subscribe(BUTTON_ID_UP, switch_state);	
+  window_single_click_subscribe(BUTTON_ID_UP, switch_state);
   window_single_click_subscribe(BUTTON_ID_DOWN, flush_data_buffer);
 }
 
@@ -147,9 +149,6 @@ void logging_init(int index){
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(text_layer));
   // Setup button handling
   window_set_click_config_provider(window, (ClickConfigProvider) click_config_provider3);
-  // Set Accelerometer to sample rate
-  // NOT WORKING: Sample rate is always 25HZ regardless
-  accel_service_set_sampling_rate(PAL_SAMPLE_RATE);
   // Start the data logging service, we use only one for the application duration
   logging_session = data_logging_create(data_log_id, DATA_LOGGING_BYTE_ARRAY, 6, false);
   // Start logging
@@ -166,7 +165,7 @@ void logging_deinit(){
   data_logging_finish(logging_session);
   // De-register acceleration event handler (needed when using back to exit screen)
   accel_data_service_unsubscribe();
-	
+
   layer_remove_from_parent(text_layer_get_layer(text_layer));
   text_layer_destroy(text_layer);
   window_destroy(window);
