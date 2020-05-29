@@ -57,7 +57,6 @@ public class MainActivity extends Activity {
     private final ArrayList<MotionActivity> activities = new ArrayList<>();
     private ArrayAdapter<Sensor> adapter;
     private Button startStopButton;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,9 +64,11 @@ public class MainActivity extends Activity {
 
         // Get listview
         ListView sensorsView = (ListView)findViewById(R.id.listView);
+        View emptyView = findViewById(R.id.emptyview);
+        sensorsView.setEmptyView(emptyView);
         // Setup progress bar
-        ProgressBar progressBar = (ProgressBar)findViewById(R.id.progressBar);
-        sensorsView.setEmptyView(progressBar);
+        //ProgressBar progressBar = (ProgressBar)findViewById(R.id.progressBar);
+        //sensorsView.setEmptyView(emptyView);
 
         // Setup data adapter
         adapter = new ArrayAdapter<Sensor>(this, android.R.layout.simple_list_item_2, android.R.id.text1, sensors) {
@@ -100,6 +101,7 @@ public class MainActivity extends Activity {
         saveAllButton.setOnClickListener(new saveAllListener());
         saveAllButton.setText("Save All");
 
+
         // Display instructions
         displayDialog("Instructions",
                 "(1) Open the accelerometer app on the Pebble. \n" +
@@ -111,6 +113,7 @@ public class MainActivity extends Activity {
                 "(6) When the data shows up, press the Save button to save the data on your phone " +
                 "(or press the Start button again to collect more data. \n" +
                 "(7) To locate the data, open your phone's file manager app, open the Downloads folder, then open the PebbleDataLogging folder.");
+        activities.add(new MotionActivity(System.currentTimeMillis()));
     }
 
     @Override
@@ -121,6 +124,8 @@ public class MainActivity extends Activity {
             @Override
             public void receiveData(Context context, UUID logUuid, Long timestamp, Long tag, byte[] data) {
                 // Check this is a valid data log
+                ProgressBar progressBar = (ProgressBar)findViewById(R.id.progressBar);
+
                 if (tag.intValue() <= features.length) {
                     // To distinguish between timestamps and readings,
                     // the first bit is 0 for readings and 1 for timestamp
@@ -160,6 +165,9 @@ public class MainActivity extends Activity {
                         int z = (int)decodeBytes(new byte[]{data[4], data[5]});
                         Sensor sensor = sensors.get(sensors.indexOf(new Sensor(features[tag.intValue()], 0)));
                         sensor.addReading(new AccelerometerReading(x, y, z));
+                        if(progressBar.getVisibility()==View.INVISIBLE){
+                            progressBar.setVisibility(View.VISIBLE);
+                        }
                     }
                 }
                 else {
@@ -170,6 +178,8 @@ public class MainActivity extends Activity {
             @Override
             public void onFinishSession(Context context, UUID logUuid, Long timestamp, Long tag) {
                 super.onFinishSession(context, logUuid, timestamp, tag);
+                ProgressBar progressBar = (ProgressBar)findViewById(R.id.progressBar);
+                progressBar.setVisibility(View.INVISIBLE);
             }
 
         };
@@ -416,11 +426,16 @@ public class MainActivity extends Activity {
             if (activities.isEmpty() || activities.get(activities.size() - 1).isFinished()) {
                 // Start recording
                 startStopButton.setText("Stop");
+
+               // ProgressBar progressBar = (ProgressBar)findViewById(R.id.progressBar);
+              //  progressBar.setVisibility(View.VISIBLE);
                 activities.add(new MotionActivity(System.currentTimeMillis()));
             }
             else {
                 // End recording
                 startStopButton.setText("Start");
+                ProgressBar progressBar = (ProgressBar)findViewById(R.id.progressBar);
+                progressBar.setVisibility(View.INVISIBLE);
                 activities.get(activities.size() - 1).finish(System.currentTimeMillis());
                 getMotionActivity(activities.get(activities.size() - 1));
             }

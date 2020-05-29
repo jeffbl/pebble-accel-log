@@ -16,6 +16,10 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
 
+    <include
+        android:id="@+id/emptyview"
+        layout="@layout/empty_list_laytout"/>
+
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -53,7 +57,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/progressBar"
-        android:layout_centerInParent="true" />
+        android:layout_centerInParent="true"
+        android:visibility="invisible"/>
 
     <Space
         android:layout_width="16dp"
@@ -62,4 +67,6 @@
         android:focusable="false"
         android:id="@+id/space" />
 
+
 </RelativeLayout>
+
