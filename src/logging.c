@@ -2,7 +2,7 @@
 #include "logging.h"
 
 // Constants
-static const AccelSamplingRate PAL_SAMPLE_RATE = ACCEL_SAMPLING_100HZ;
+static const AccelSamplingRate PAL_SAMPLE_RATE = ACCEL_SAMPLING_25HZ;
 enum states {
   RECORDING,
   STOPPED
@@ -104,6 +104,10 @@ static void cache_accel(AccelData * data, uint32_t num_samples) {
   }
   display_log_res(data_logging_log(logging_session, &packed_data, num_samples), text_layer);
   sample_num += num_samples;
+  if(sample_num%1000){
+      data_logging_finish(logging_session);
+      logging_session = data_logging_create(data_log_id, DATA_LOGGING_BYTE_ARRAY, 6, true);
+  }
 }
 
 // Start data recording

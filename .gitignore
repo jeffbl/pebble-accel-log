@@ -6,3 +6,4 @@
 /android/.idea
 # Ignore Gradle settings
 /android/.gradle
+/.gradle/
