@@ -66,9 +66,6 @@ public class MainActivity extends Activity {
         ListView sensorsView = (ListView)findViewById(R.id.listView);
         View emptyView = findViewById(R.id.emptyview);
         sensorsView.setEmptyView(emptyView);
-        // Setup progress bar
-        //ProgressBar progressBar = (ProgressBar)findViewById(R.id.progressBar);
-        //sensorsView.setEmptyView(emptyView);
 
         // Setup data adapter
         adapter = new ArrayAdapter<Sensor>(this, android.R.layout.simple_list_item_2, android.R.id.text1, sensors) {
@@ -87,10 +84,6 @@ public class MainActivity extends Activity {
         // Add listview display adapter
         sensorsView.setAdapter(adapter);
 
-        // Setup start/stop button
-        startStopButton = (Button)findViewById(R.id.startstopbutton);
-        startStopButton.setOnClickListener(new startStopListener());
-        startStopButton.setText("Start");
 
         // Setup save buttons
         Button saveButton = (Button)findViewById(R.id.savebutton);
@@ -107,12 +100,11 @@ public class MainActivity extends Activity {
                 "(1) Open the accelerometer app on the Pebble. \n" +
                 "(2) In the Pebble app, select the part of the body where the Pebble is attched to. " +
                 "Then press any button except the back button to start logging. \n" +
-                "(3) Press the Start button on the Android app. \n" +
-                "(4) When you are finished recording, press the Stop button on the Android app. \n" +
-                "(5) Press any button except the back button on the Pebble. \n" +
-                "(6) When the data shows up, press the Save button to save the data on your phone " +
-                "(or press the Start button again to collect more data. \n" +
-                "(7) To locate the data, open your phone's file manager app, open the Downloads folder, then open the PebbleDataLogging folder.");
+                "(3) Press the top or middle buttons to stop \n" +
+                "(4) Press any button to exit \n" +
+                "(5) When the data shows up, press the Save button to save the data on your phone \n" +
+                "(6) To locate the data, open your phone's file manager app, open the Downloads folder, then open the PebbleDataLogging folder.");
+        //start to listen to possible data logging
         activities.add(new MotionActivity(System.currentTimeMillis()));
     }
 
@@ -420,31 +412,10 @@ public class MainActivity extends Activity {
         }
 
     }
-    private class startStopListener implements View.OnClickListener {
-        @Override
-        public void onClick(View v) {
-            if (activities.isEmpty() || activities.get(activities.size() - 1).isFinished()) {
-                // Start recording
-                startStopButton.setText("Stop");
-
-               // ProgressBar progressBar = (ProgressBar)findViewById(R.id.progressBar);
-              //  progressBar.setVisibility(View.VISIBLE);
-                activities.add(new MotionActivity(System.currentTimeMillis()));
-            }
-            else {
-                // End recording
-                startStopButton.setText("Start");
-                ProgressBar progressBar = (ProgressBar)findViewById(R.id.progressBar);
-                progressBar.setVisibility(View.INVISIBLE);
-                activities.get(activities.size() - 1).finish(System.currentTimeMillis());
-                getMotionActivity(activities.get(activities.size() - 1));
-            }
-        }
-    }
     private class saveListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            finishAndSaveReading(false);
+            finishAndSaveReading(true);
         }
     }
     private class saveAllListener implements View.OnClickListener {

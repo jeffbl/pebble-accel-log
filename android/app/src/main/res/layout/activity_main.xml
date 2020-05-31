@@ -12,7 +12,6 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_above="@+id/startstopbutton"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
 
@@ -20,16 +19,6 @@
         android:id="@+id/emptyview"
         layout="@layout/empty_list_laytout"/>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Loading..."
-        android:id="@+id/startstopbutton"
-        android:layout_above="@+id/saveallbutton"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
 
     <Button
         android:layout_width="wrap_content"
