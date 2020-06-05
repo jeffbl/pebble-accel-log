@@ -141,9 +141,13 @@ static void switch_state(ClickRecognizerRef recognizer, void * context) {
 
 // Setup button handling
 void click_config_provider3(Window *window) {
-  window_single_click_subscribe(BUTTON_ID_SELECT, switch_state);
-  window_single_click_subscribe(BUTTON_ID_UP, switch_state);
-  window_single_click_subscribe(BUTTON_ID_DOWN, flush_data_buffer);
+    uint8_t min=3;
+    uint8_t max=3;
+    uint16_t timeout=300;
+    bool last_click_only=true;
+    window_multi_click_subscribe(BUTTON_ID_SELECT,min,max,timeout,last_click_only,switch_state);
+    window_multi_click_subscribe(BUTTON_ID_UP,min,max,timeout,last_click_only,switch_state);
+    window_single_click_subscribe(BUTTON_ID_DOWN, flush_data_buffer);
 }
 
 void logging_init(int index){
