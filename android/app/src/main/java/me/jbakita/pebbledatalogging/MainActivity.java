@@ -219,14 +219,16 @@ public class MainActivity extends Activity {
                 });
         builder.create().show();
     }
-
+    private void get_name(){
+        activities.get(activities.size() - 1).finish(System.currentTimeMillis());
+        getMotionActivity(activities.get(activities.size() - 1));
+    }
     /**
      * Save the contents of each sensor for each activity
      * @param saveAll If true, ignore activities and dump unbounded sensor data
      */
     private void finishAndSaveReading(boolean saveAll) {
         activities.get(activities.size() - 1).finish(System.currentTimeMillis());
-        getMotionActivity(activities.get(activities.size() - 1));
         Log.d("MainActivity", sensors.toString());
         if (!isExternalStorageWritable()) {
             displayDialog("Error", "External storage is not writable. Unable to save readings.");
@@ -271,6 +273,7 @@ public class MainActivity extends Activity {
             displayDialog("Error", "Unable to create directory in which to save readings. Maybe out of space?");
             return;
         }
+        get_name();
         // Create the file in the <activity name>-<sensor name>-<system time>.csv format
         File file = new File(dir, name + " " + sensor.getTitle() + " " + DateFormat.getDateTimeInstance().format(new Date()) + ".csv");
         FileOutputStream outputStream = new FileOutputStream(file);
@@ -288,12 +291,12 @@ public class MainActivity extends Activity {
             }
         }
         // Do some validation on the dataset
-        if (lastReading + 1010 < stopTime) {
+       /* if (lastReading + 1000 < stopTime) {
             displayDialog("Warning!", "It seems like the dataset you just saved stopped sooner than expected. Make sure that you have all your sensor data.");
         }
         if (firstReading - 1000 > startTime) {
             displayDialog("Warning!", "It seems like the dataset you just saved started later than expected. Make sure that you have all your sensor data.");
-        }
+        }*/
         outputStream.close();
         // Workaround for Android bug #38282
         MediaScannerConnection.scanFile(this, new String[]{file.getAbsolutePath()}, null, null);
