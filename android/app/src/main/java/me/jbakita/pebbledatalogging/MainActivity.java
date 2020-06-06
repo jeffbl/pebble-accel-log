@@ -36,19 +36,19 @@ public class MainActivity extends Activity {
 
     // WATCHAPP_UUID *MUST* match the UUID used in the watchapp
     private static final UUID WATCHAPP_UUID = UUID.fromString("631b528e-c553-486c-b5ac-da08f63f01de");
-    // 'features' needs to be kept in sync with the watchapp menu items and ordering
-    private String[] features = {
-        "DOMINANT_WRIST",
-        "NON_DOMINANT_WRIST",
-        "WAIST",
-        "RIGHT_ANKLE",
-        "LEFT_ANKLE",
-        "UPPER_DOMINANT_ARM",
-        "UPPER_NON_DOMINANT_ARM",
-        "RIGHT_THIGH",
-        "LEFT_THIGH",
-        "CHEST",
-        "NECK"
+    // 'Users' needs to be kept in sync with the watchapp menu items and ordering
+    private String[] Users = {
+        "User A",
+        "User B",
+        "User C",
+        "User D",
+        "User E",
+        "User F",
+        "User G",
+        "User H",
+        "User I",
+        "User J",
+        "User K"
     };
     private String[] activityStrings = {"Pushups", "Situps", "Jumping Jacks", "Staying Still", "Jogging", "Walking"};
 
@@ -56,7 +56,6 @@ public class MainActivity extends Activity {
     private final ArrayList<Sensor> sensors = new ArrayList<>();
     private final ArrayList<MotionActivity> activities = new ArrayList<>();
     private ArrayAdapter<Sensor> adapter;
-    private Button startStopButton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -118,13 +117,13 @@ public class MainActivity extends Activity {
                 // Check this is a valid data log
                 ProgressBar progressBar = (ProgressBar)findViewById(R.id.progressBar);
 
-                if (tag.intValue() <= features.length) {
+                if (tag.intValue() <= Users.length) {
                     // To distinguish between timestamps and readings,
                     // the first bit is 0 for readings and 1 for timestamp
                     /* To conserve data, but maximize accuracy, the first 'reading'
                      * for each data log ID is the beginning timestamp.
                      */
-                    if (sensors.indexOf(new Sensor(features[tag.intValue()], 0)) == -1) {
+                    if (sensors.indexOf(new Sensor(Users[tag.intValue()], 0)) == -1) {
                         // First reading must be a timestamp
                         if (data[0] >> 31 != 0xffffffff) {
                             displayDialog("Error", "It seems like a data buffer is out of sync. Data will be corrupted. Please flush buffers and try again.");
@@ -133,7 +132,7 @@ public class MainActivity extends Activity {
                         // Erase the tag bit with sign extension to prep for decoding
                         data[0] = (byte)(data[0] << 25 >> 25);
                         // Decode and save
-                        Sensor sensor = new Sensor(features[tag.intValue()], decodeBytes(data));
+                        Sensor sensor = new Sensor(Users[tag.intValue()], decodeBytes(data));
                         sensors.add(sensor);
                     }
                     else if (data[0] >> 31 == 0xffffffff) {
@@ -142,10 +141,14 @@ public class MainActivity extends Activity {
                         data[0] = (byte)(data[0] << 25 >> 25);
                         // Decode and add timestamp
                         long syncTimestamp = decodeBytes(data);
-                        Sensor sensor = sensors.get(sensors.indexOf(new Sensor(features[tag.intValue()], 0)));
+                        Sensor sensor = sensors.get(sensors.indexOf(new Sensor(Users[tag.intValue()], 0)));
                         sensor.addTimestamp(syncTimestamp);
                         // Refresh UI
                         adapter.notifyDataSetChanged();
+                       // if(dataloggingReceiver==null){
+                        //    activities.get(activities.size() - 1).finish(System.currentTimeMillis());
+                       //     getMotionActivity(activities.get(activities.size() - 1));
+                      //  }
                     }
                     else {
                         // We have a reading
@@ -155,7 +158,7 @@ public class MainActivity extends Activity {
                         int x = (int)decodeBytes(new byte[]{data[0], data[1]});
                         int y = (int)decodeBytes(new byte[]{data[2], data[3]});
                         int z = (int)decodeBytes(new byte[]{data[4], data[5]});
-                        Sensor sensor = sensors.get(sensors.indexOf(new Sensor(features[tag.intValue()], 0)));
+                        Sensor sensor = sensors.get(sensors.indexOf(new Sensor(Users[tag.intValue()], 0)));
                         sensor.addReading(new AccelerometerReading(x, y, z));
                         if(progressBar.getVisibility()==View.INVISIBLE){
                             progressBar.setVisibility(View.VISIBLE);
@@ -215,7 +218,6 @@ public class MainActivity extends Activity {
                     }
                 });
         builder.create().show();
-
     }
 
     /**
@@ -223,6 +225,8 @@ public class MainActivity extends Activity {
      * @param saveAll If true, ignore activities and dump unbounded sensor data
      */
     private void finishAndSaveReading(boolean saveAll) {
+        activities.get(activities.size() - 1).finish(System.currentTimeMillis());
+        getMotionActivity(activities.get(activities.size() - 1));
         Log.d("MainActivity", sensors.toString());
         if (!isExternalStorageWritable()) {
             displayDialog("Error", "External storage is not writable. Unable to save readings.");
@@ -284,7 +288,7 @@ public class MainActivity extends Activity {
             }
         }
         // Do some validation on the dataset
-        if (lastReading + 1000 < stopTime) {
+        if (lastReading + 1010 < stopTime) {
             displayDialog("Warning!", "It seems like the dataset you just saved stopped sooner than expected. Make sure that you have all your sensor data.");
         }
         if (firstReading - 1000 > startTime) {
@@ -415,13 +419,13 @@ public class MainActivity extends Activity {
     private class saveListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            finishAndSaveReading(true);
+            finishAndSaveReading(false);
         }
     }
     private class saveAllListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            finishAndSaveReading(true);
+            finishAndSaveReading(false);
         }
     }
 }
