@@ -10,7 +10,7 @@
 static Window *window;
 static SimpleMenuLayer *menu_layer;
 static SimpleMenuSection section_array[NUMBER_OF_SECTIONS];
-static SimpleMenuItem item_array[NUMBER_OF_ITEMS];
+static SimpleMenuItem users_array[NUMBER_OF_ITEMS];
 
 // Loads the next screen whenever a menu item is selected
 static void menu_select_callback(int index, void *context){
@@ -24,55 +24,55 @@ void menu_init(){
 	GRect bounds = layer_get_bounds(window_layer);
 	
 	// Creating the menu entries
-	item_array[0] = (SimpleMenuItem) {
-		.title = "Dominant Wrist",
+	users_array[0] = (SimpleMenuItem) {
+		.title = "User A",
 		.callback = menu_select_callback,
 	};	
-	item_array[1] = (SimpleMenuItem) {
-		.title = "Non-Dominant Wrist",
+	users_array[1] = (SimpleMenuItem) {
+		.title = "User B",
 		.callback = menu_select_callback,
 	};	
-	item_array[2] = (SimpleMenuItem) {
-		.title = "Waist",
+	users_array[2] = (SimpleMenuItem) {
+		.title = "User C",
 		.callback = menu_select_callback,
 	};	
-	item_array[3] = (SimpleMenuItem) {
-		.title = "Right Ankle",
+	users_array[3] = (SimpleMenuItem) {
+		.title = "User D",
 		.callback = menu_select_callback,
 	};	
-	item_array[4] = (SimpleMenuItem) {
-		.title = "Left Ankle",
+	users_array[4] = (SimpleMenuItem) {
+		.title = "User E",
 		.callback = menu_select_callback,
 	};	
-	item_array[5] = (SimpleMenuItem) {
-		.title = "Upper Dominant Arm",
+	users_array[5] = (SimpleMenuItem) {
+		.title = "User F",
 		.callback = menu_select_callback,
 	};	
-	item_array[6] = (SimpleMenuItem) {
-		.title = "Upper Non-Dominant Arm",
+	users_array[6] = (SimpleMenuItem) {
+		.title = "User G",
 		.callback = menu_select_callback,
 	};	
-	item_array[7] = (SimpleMenuItem) {
-		.title = "Right Thigh",
+	users_array[7] = (SimpleMenuItem) {
+		.title = "User H",
 		.callback = menu_select_callback,
 	};	
-	item_array[8] = (SimpleMenuItem) {
-		.title = "Left Thigh",
+	users_array[8] = (SimpleMenuItem) {
+		.title = "User I",
 		.callback = menu_select_callback,
 	};		
-	item_array[9] = (SimpleMenuItem) {
-		.title = "Chest",
+	users_array[9] = (SimpleMenuItem) {
+		.title = "User J",
 		.callback = menu_select_callback,
 	};	
-	item_array[10] = (SimpleMenuItem) {
-		.title = "Neck",
+	users_array[10] = (SimpleMenuItem) {
+		.title = "User K",
 		.callback = menu_select_callback,
 	};
 
 	// Adding entries to the section
 	section_array[0] = (SimpleMenuSection) {
 		.num_items = NUMBER_OF_ITEMS,
-		.items = item_array
+		.items = users_array
 	};
 	
 	// Adding the menu to the window

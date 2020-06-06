@@ -105,7 +105,7 @@ static void cache_accel(AccelData * data, uint32_t num_samples) {
   display_log_res(data_logging_log(logging_session, &packed_data, num_samples), text_layer);
   sample_num += num_samples;
   // for every 1000 samples collected, synchronize the data to the phone app
-  if(sample_num%1000){
+  if(sample_num%1000==0){
       data_logging_finish(logging_session);
       logging_session = data_logging_create(data_log_id, DATA_LOGGING_BYTE_ARRAY, 6, true);
   }
@@ -119,7 +119,7 @@ static void start(ClickRecognizerRef recognizer, void *context) {
   // Set Accelerometer to sample rate
   accel_service_set_sampling_rate(PAL_SAMPLE_RATE);
   // Display the pre-run message
-  text_layer_set_text(text_layer, "Logging...\n\n(press the top or middle buttons to stop, or the bottom button to flush the data buffer)");
+  text_layer_set_text(text_layer, "Logging...\n\n(Triple press the top or middle buttons to stop, or the bottom button to flush the data buffer)");
 }
 
 // Analyse and dislay data
@@ -128,7 +128,7 @@ static void stop(ClickRecognizerRef recognizer, void *context) {
   // De-register acceleration event handler
   accel_data_service_unsubscribe();
   // Display appropriate message
-  text_layer_set_text(text_layer, "Stopped.\n\nPress any button to exit.");
+  text_layer_set_text(text_layer, "Stopped.\n\n Triple press any button to exit.");
 }
 
 // Toggle state
