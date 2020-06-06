@@ -215,11 +215,12 @@ public class MainActivity extends Activity {
                 .setItems(activityStrings, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         act.name = activityStrings[which];
+                        finishAndSaveReading(false);
                     }
                 });
         builder.create().show();
     }
-    private void get_name(){
+    private void Save_in_File(){
         activities.get(activities.size() - 1).finish(System.currentTimeMillis());
         getMotionActivity(activities.get(activities.size() - 1));
     }
@@ -228,7 +229,6 @@ public class MainActivity extends Activity {
      * @param saveAll If true, ignore activities and dump unbounded sensor data
      */
     private void finishAndSaveReading(boolean saveAll) {
-        activities.get(activities.size() - 1).finish(System.currentTimeMillis());
         Log.d("MainActivity", sensors.toString());
         if (!isExternalStorageWritable()) {
             displayDialog("Error", "External storage is not writable. Unable to save readings.");
@@ -273,7 +273,6 @@ public class MainActivity extends Activity {
             displayDialog("Error", "Unable to create directory in which to save readings. Maybe out of space?");
             return;
         }
-        get_name();
         // Create the file in the <activity name>-<sensor name>-<system time>.csv format
         File file = new File(dir, name + " " + sensor.getTitle() + " " + DateFormat.getDateTimeInstance().format(new Date()) + ".csv");
         FileOutputStream outputStream = new FileOutputStream(file);
@@ -422,13 +421,14 @@ public class MainActivity extends Activity {
     private class saveListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            finishAndSaveReading(false);
+            Save_in_File();
+            //finishAndSaveReading(false);
         }
     }
     private class saveAllListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            finishAndSaveReading(false);
+            Save_in_File();
         }
     }
 }
