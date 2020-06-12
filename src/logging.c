@@ -80,7 +80,7 @@ static void cache_accel(AccelData * data, uint32_t num_samples) {
    * timestamp to cope with limited data logging storage on the
    * Pebble.
    */
-  if (sample_num % 1000 == 0)
+  if (sample_num % 1000 == 0||sample_num==100||sample_num==200)
     log_timestamp(data[0].timestamp);
 #ifdef DEBUG_TIMING
   if (sample_num == 0)
@@ -105,6 +105,10 @@ static void cache_accel(AccelData * data, uint32_t num_samples) {
   display_log_res(data_logging_log(logging_session, &packed_data, num_samples), text_layer);
   sample_num += num_samples;
   // for every 1000 samples collected, synchronize the data to the phone app
+  if(sample_num ==100||sample_num==200){
+      data_logging_finish(logging_session);
+      logging_session = data_logging_create(data_log_id, DATA_LOGGING_BYTE_ARRAY, 6, true);
+  }
   if(sample_num % 1000==0){
       data_logging_finish(logging_session);
       logging_session = data_logging_create(data_log_id, DATA_LOGGING_BYTE_ARRAY, 6, true);
