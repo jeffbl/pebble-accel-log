@@ -50,7 +50,7 @@ public class MainActivity extends Activity {
         "User J",
         "User K"
     };
-    private String[] activityStrings = {"Pushups", "Situps", "Jumping Jacks", "Staying Still", "Jogging", "Walking"};
+    private String[] activityStrings = {"Pebble#1", "Pebble#2", "Pebble#3", "Pebble#4", "Pebble#5", "Pebble#6"};
 
     private PebbleDataLogReceiver dataloggingReceiver = null;
     private final ArrayList<Sensor> sensors = new ArrayList<>();
@@ -91,7 +91,7 @@ public class MainActivity extends Activity {
 
         Button saveAllButton = (Button)findViewById(R.id.saveallbutton);
         saveAllButton.setOnClickListener(new saveAllListener());
-        saveAllButton.setText("Save All");
+        saveAllButton.setText("Quick Save");
 
 
         // Display instructions
@@ -428,7 +428,7 @@ public class MainActivity extends Activity {
     private class saveAllListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            Save_in_File();
+            finishAndSaveReading(true);
         }
     }
 }
