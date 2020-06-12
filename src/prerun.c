@@ -29,9 +29,10 @@ void prerun_init(int index){
 	text_layer_set_text(text_layer, text);
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(text_layer));
 	
-  window_set_click_config_provider(window, (ClickConfigProvider) click_config_provider2);
+  //window_set_click_config_provider(window, (ClickConfigProvider) click_config_provider2);
+  logging_init(index);
 	
-  window_stack_push(window, true);
+  //window_stack_push(window, true);
 }
 
 void prerun_deinit(){
