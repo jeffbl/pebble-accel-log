@@ -112,6 +112,7 @@ public class MainActivity extends Activity {
         super.onResume();
         // Define data reception behavior
         dataloggingReceiver = new PebbleDataLogReceiver(WATCHAPP_UUID) {
+            int count=0;
             @Override
             public void receiveData(Context context, UUID logUuid, Long timestamp, Long tag, byte[] data) {
                 // Check this is a valid data log
@@ -145,10 +146,10 @@ public class MainActivity extends Activity {
                         sensor.addTimestamp(syncTimestamp);
                         // Refresh UI
                         adapter.notifyDataSetChanged();
-                       // if(dataloggingReceiver==null){
-                        //    activities.get(activities.size() - 1).finish(System.currentTimeMillis());
-                       //     getMotionActivity(activities.get(activities.size() - 1));
-                      //  }
+                        if(count>0){
+                            Autosave();
+                        }
+                        count++;
                     }
                     else {
                         // We have a reading
@@ -254,7 +255,68 @@ public class MainActivity extends Activity {
         }
         displayDialog("Success", "Data successfully saved.");
     }
+    private void Autosave() {
+        Log.d("MainActivity", sensors.toString());
+        if (!isExternalStorageWritable()) {
+            displayDialog("Error", "External storage is not writable. Unable to save readings.");
+            return;
+        }
+        try {
+            for (Sensor sensor : sensors) {
+                AutosaveSensorReadings("Auto Save", sensor, sensor.getStartTime(), sensor.getStopTime());
+                displayDialog("Success", "success");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            displayDialog("Error", "Unable to completely save readings. See ADB log for details.");
+            return;
+        }
+    }
+    private void AutosaveSensorReadings(String name, Sensor sensor, long startTime, long stopTime) throws IOException {
+        ArrayList<AccelerometerReading> readings = sensor.getReadings();
+        long lastReading = 0;
+        long firstReading = 0;
+        // Get/create our application's save folder
+        String savePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/PebbleDataLogging/";
+        Log.d("log path: ", savePath);
+        File dir = new File(savePath);
+        //File dir = new File(ContextCompat.getExternalFilesDirs(getApplicationContext(), null)[0] + "/PebbleDataLogging/");
+        // Make sure that the path is a directory if it exists, otherwise create it
+        if (dir.exists() && !dir.isDirectory()) {
+            displayDialog("Error", "Unable to save readings. Save path exists, but is not a directory");
+            return;
+        }
+        else if (!dir.exists() && !dir.mkdir()) {
+            displayDialog("Error", "Unable to create directory in which to save readings. Maybe out of space?");
+            return;
+        }
+        // Create the file in the <activity name>-<sensor name>-<system time>.csv format
+        File file = new File(dir, name + " " + sensor.getTitle() + " " + ".csv");
+        FileOutputStream outputStream = new FileOutputStream(file);
+        Log.d("MainActivity", "Writing to " + file.getAbsolutePath());
 
+        // Write the column headers
+        outputStream.write((AccelerometerReading.CSV_HEADER + "\n").getBytes());
+        // Write all the readings which correlate to our current activity
+        for (int k = 0; k < readings.size(); k++) {
+            if (readings.get(k).getTimestamp() >= startTime && readings.get(k).getTimestamp() < stopTime) {
+                if (firstReading == 0)
+                    firstReading = readings.get(k).getTimestamp();
+                outputStream.write((readings.get(k).toCSV() + "\n").getBytes());
+                lastReading = readings.get(k).getTimestamp();
+            }
+        }
+        // Do some validation on the dataset
+       /* if (lastReading + 1000 < stopTime) {
+            displayDialog("Warning!", "It seems like the dataset you just saved stopped sooner than expected. Make sure that you have all your sensor data.");
+        }
+        if (firstReading - 1000 > startTime) {
+            displayDialog("Warning!", "It seems like the dataset you just saved started later than expected. Make sure that you have all your sensor data.");
+        }*/
+        outputStream.close();
+        // Workaround for Android bug #38282
+        MediaScannerConnection.scanFile(this, new String[]{file.getAbsolutePath()}, null, null);
+    }
     private void saveSensorReadings(String name, Sensor sensor, long startTime, long stopTime) throws IOException {
         ArrayList<AccelerometerReading> readings = sensor.getReadings();
         long lastReading = 0;
