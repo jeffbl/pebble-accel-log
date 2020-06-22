@@ -255,6 +255,11 @@ public class MainActivity extends Activity {
         }
         displayDialog("Success", "Data successfully saved.");
     }
+    /* with the following methods Autosave, the phone creates a new document 'AutoSave+UserName'
+    * and save the collected data into the Autosave file. This action is to ensure that no data is lost
+    * in case if a crash happens. After finishing data logging, if the user save the data manually, ideally
+    * we have two saved file in parallel but with different file name. The manually saved file with name
+    * that contains the name of the pebble device and saving time.*/
     private void Autosave() {
         Log.d("MainActivity", sensors.toString());
         if (!isExternalStorageWritable()) {
@@ -264,7 +269,6 @@ public class MainActivity extends Activity {
         try {
             for (Sensor sensor : sensors) {
                 AutosaveSensorReadings("Auto Save", sensor, sensor.getStartTime(), sensor.getStopTime());
-                displayDialog("Success", "success");
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -317,6 +321,7 @@ public class MainActivity extends Activity {
         // Workaround for Android bug #38282
         MediaScannerConnection.scanFile(this, new String[]{file.getAbsolutePath()}, null, null);
     }
+
     private void saveSensorReadings(String name, Sensor sensor, long startTime, long stopTime) throws IOException {
         ArrayList<AccelerometerReading> readings = sensor.getReadings();
         long lastReading = 0;
