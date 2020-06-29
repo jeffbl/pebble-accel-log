@@ -97,11 +97,10 @@ public class MainActivity extends Activity {
         // Display instructions
         displayDialog("Instructions",
                 "(1) Open the accelerometer app on the Pebble. \n" +
-                "(2) In the Pebble app, select the part of the body where the Pebble is attched to. " +
-                "Then press any button except the back button to start logging. \n" +
-                "(3) Press the top or middle buttons to stop \n" +
-                "(4) Press any button to exit \n" +
-                "(5) When the data shows up, press the Save button to save the data on your phone \n" +
+                "(2) In the Pebble app, select the user to start logging. \n" +
+                "(3) Tripple press the top or middle buttons to stop. \n" +
+                "(4) Tripple press any button to exit. \n" +
+                "(5) Press the Save button to save the data on your phone. \n" +
                 "(6) To locate the data, open your phone's file manager app, open the Downloads folder, then open the PebbleDataLogging folder.");
         //start to listen to possible data logging
         activities.add(new MotionActivity(System.currentTimeMillis()));

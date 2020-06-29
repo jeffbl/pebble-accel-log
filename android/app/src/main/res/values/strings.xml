@@ -3,4 +3,6 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="remainder_please_exit_the_pebble_app_before_save_for_the_completeness_of_the_data">Remainder: please EXIT the pebble app BEFORE SAVE for the completeness of the data</string>
+    <string name="no_data">No Data</string>
 </resources>
